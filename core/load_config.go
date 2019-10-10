@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/TRON-US/soter-controller-server/log"
+	"github.com/TRON-US/soter-demo/log"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
