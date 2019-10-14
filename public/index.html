@@ -17,8 +17,9 @@
 <div id="app">
     <p style="font-weight: bold">BTFS Soter</p>
     <p style="font-size: 12px">Decentralized file storage tool</p>
+    <p>Source code of this demo: <a href="https://github.com/TRON-US/soter-demo" target="_blank">GitHub</a></p>
     <br>
-    <span class="soter-title">Upload file</span>
+    <div class="soter-title">Upload file</div>
     <el-upload class="soter-upload"
                action=""
                ref="upload"
@@ -30,8 +31,9 @@
                :limit="1"
                drag>
         <i class="el-icon-upload"></i>
-        <div class="el-upload__text">Drag the file here, or<em>click upload</em></div>
+        <div class="el-upload__text">Drag the file here, or <em>click upload</em></div>
     </el-upload>
+    <div v-if="qmHash">The file you just uploaded can be accessed via this <a v-bind:href="'https://gateway.btfssoter.io/btfs/' + qmHash" target="_blank">link</a></div>
     <div style="margin-top: 40px; margin-left: -10px">
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">Upload to server</el-button>
         <el-button style="margin-left: 10px;" size="small" type="primary" @click="getBalance">Query balance</el-button>
@@ -54,6 +56,7 @@
             },
             files:[],
             tronWeb: {},
+            qmHash: '',
         },
         methods: {
             beforeUploadFile (file){
@@ -95,12 +98,13 @@
                 formData.append("raw_data",JSON.stringify(rawData));
                 formData.append("signature",signatureData);
 
-                axios.post("https://52.175.71.223/api/v0/add",formData).then(function (response) {
+                axios.post("https://api.btfssoter.io/api/v0/add",formData).then(function (response) {
                     if (response.status === 200 && response.data.code === 0){
                         _this.$message({
                             message: 'Upload file successfully, file HASH value: ['+response.data.cid+']',
                             type: 'success'
                         });
+                        _this.qmHash = response.data.cid;
                     } else{
                         _this.$message.error('Upload failed: '+response.data.message);
                     }
@@ -122,7 +126,7 @@
                     });
                     return false
                 }
-                axios.get("https://52.175.71.223/api/v0/inquiry?user_address=" + window.tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
+                axios.get("https://api.btfssoter.io/api/v0/inquiry?user_address=" + window.tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
                     if (response.status === 200 && response.data.code === 0) {
                         _this.$message({
                             message: 'Balance: [' + response.data.balance + ']',
