@@ -26,7 +26,8 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		path = "."
 	}
 	filepath := fmt.Sprintf("%s/public", path)
-	g.Static("/index", filepath)
+	g.StaticFile("/demo", filepath+"/demo.html")
+	g.StaticFile("/token", filepath+"/token.html")
 
 	transfer := g.Group("api/v0")
 	{
