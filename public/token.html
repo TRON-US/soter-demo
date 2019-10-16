@@ -39,7 +39,7 @@
         </div>
 
         <div class="soter-button">
-            <el-button type="primary" :loading="load" @Click="getToken">Obtain</el-button>
+            <el-button type="primary" :loading="load" @Click="getToken">{{buttonName}}</el-button>
         </div>
     </form>
 </div>
@@ -57,11 +57,17 @@
         el: '#app',
         data: {
             address: '',
-            load: false
+            load: false,
+            buttonName: 'Obtain'
         },
         methods: {
             getToken() {
                 const _this = this;
+
+                if (_this.address === ''){
+                    _this.$message.error('Account address cannot be empty!');
+                    return
+                }
 
                 let formData = new FormData();
                 formData.append("address", this.address);
@@ -76,15 +82,19 @@
                         _this.$message.error(response.data.message);
                     }
                     _this.load = true;
+                    _this.buttonName = 'Wait 60s';
                     setTimeout(()=>{
                         _this.load = false;
+                        _this.buttonName = 'Obtain'
                     }, 60000);
                     return response;
                 }).catch(function (error) {
                     _this.$message.error(error);
-                    this.load = true;
+                    _this.load = true;
+                    _this.buttonName = 'Wait 60s';
                     setTimeout(()=>{
                         _this.load = false;
+                        _this.buttonName = 'Obtain'
                     }, 60000);
                     return error.response;
                 });
