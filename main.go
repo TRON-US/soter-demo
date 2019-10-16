@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/TRON-US/soter-demo/core"
+	"github.com/TRON-US/soter-demo/conf"
 	"github.com/TRON-US/soter-demo/log"
 	"github.com/TRON-US/soter-demo/router"
 
@@ -13,14 +13,14 @@ import (
 )
 
 var (
-	cfg = pflag.StringP("config", "c", "", "soter controller server config file path")
+	cfg = pflag.StringP("config", "c", "", "BTFS soter demo server config file path")
 )
 
 func main() {
 	pflag.Parse()
 
 	// init config via viper
-	if err := core.InitConfig(*cfg); err != nil {
+	if err := conf.InitConfig(*cfg); err != nil {
 		panic(err)
 	}
 
@@ -31,9 +31,9 @@ func main() {
 	router.Load(g)
 
 	// start controller server
-	log.Logger().Info(fmt.Sprintf("controller server is listening on port %s ...", viper.GetString("server_port")))
+	log.Logger().Info(fmt.Sprintf("soter demo server is listening on port %s ...", viper.GetString("server_port")))
 	if err := g.Run(viper.GetString("server_port")); err != nil {
-		log.Logger().Fatal(fmt.Sprintf("controller server runs error: %s", err))
+		log.Logger().Fatal(fmt.Sprintf("soter demo server runs error: %s", err))
 	}
-	log.Logger().Info("controller server quit")
+	log.Logger().Info("soter demo server quit")
 }

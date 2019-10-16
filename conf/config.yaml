@@ -2,3 +2,12 @@ server_port: :8001
 log:
   path: .
   level: debug
+
+public_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+private_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+token_id: XXXXXXX
+
+redis:
+  host: 127.0.0.1:6379
+  index: 0
+  poolSize: 10

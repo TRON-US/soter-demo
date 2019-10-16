@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/TRON-US/soter-demo/handler"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +27,11 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	}
 	filepath := fmt.Sprintf("%s/public", path)
 	g.Static("/index", filepath)
+
+	transfer := g.Group("api/v0")
+	{
+		transfer.POST("transfer", handler.Transfer)
+	}
 
 	return g
 }
