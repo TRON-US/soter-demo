@@ -53,14 +53,34 @@
 <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
 
 <script>
+    const TIME_COUNT = 60;
     new Vue({
         el: '#app',
         data: {
             address: '',
             load: false,
+            count: 60,
+            timer: null,
             buttonName: 'Obtain'
         },
         methods: {
+            getCode(){
+                if (!this.timer) {
+                    this.count = TIME_COUNT;
+                    this.load = true;
+                    this.timer = setInterval(() => {
+                        if (this.count > 0 && this.count <= TIME_COUNT) {
+                            this.buttonName = `Wait ${this.count--}s`;
+                            console.log( this.buttonName)
+                        } else {
+                            clearInterval(this.timer);
+                            this.timer = null;
+                            this.load = false;
+                            this.buttonName = 'Obtain'
+                        }
+                    }, 1000)
+                }
+            },
             getToken() {
                 const _this = this;
 
@@ -78,25 +98,12 @@
                             message: 'Get test token success, please wait and check!',
                             type: 'success'
                         });
+                        _this.getCode();
                     } else{
                         _this.$message.error(response.data.message);
                     }
-                    _this.load = true;
-                    _this.buttonName = 'Wait 60s';
-                    setTimeout(()=>{
-                        _this.load = false;
-                        _this.buttonName = 'Obtain'
-                    }, 60000);
-                    return response;
                 }).catch(function (error) {
                     _this.$message.error(error);
-                    _this.load = true;
-                    _this.buttonName = 'Wait 60s';
-                    setTimeout(()=>{
-                        _this.load = false;
-                        _this.buttonName = 'Obtain'
-                    }, 60000);
-                    return error.response;
                 });
             }
         }
