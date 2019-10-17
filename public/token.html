@@ -67,11 +67,9 @@
             getCode(){
                 if (!this.timer) {
                     this.count = TIME_COUNT;
-                    this.load = true;
                     this.timer = setInterval(() => {
                         if (this.count > 0 && this.count <= TIME_COUNT) {
                             this.buttonName = `Wait ${this.count--}s`;
-                            console.log( this.buttonName)
                         } else {
                             clearInterval(this.timer);
                             this.timer = null;
@@ -84,6 +82,8 @@
             getToken() {
                 const _this = this;
 
+                _this.load = true;
+
                 if (_this.address === ''){
                     _this.$message.error('Account address cannot be empty!');
                     return
@@ -92,7 +92,7 @@
                 let formData = new FormData();
                 formData.append("address", this.address);
 
-                axios.post("api/v0/transfer",formData).then(function (response) {
+                axios.post("/api/v0/transfer",formData).then(function (response) {
                     if (response.status === 200 && response.data.code === 0){
                         _this.$message({
                             message: 'Get test token success, please wait and check!',
@@ -101,9 +101,11 @@
                         _this.getCode();
                     } else{
                         _this.$message.error(response.data.message);
+                        _this.load = false;
                     }
                 }).catch(function (error) {
                     _this.$message.error(error);
+                    _this.load = false;
                 });
             }
         }
