@@ -95,7 +95,7 @@
             async handleUpload(params) {
                 
                 const _this = this;
-                if (window.tronWeb && (window.tronWeb.defaultAddress.base58=== false)){
+                if (tronWeb && (tronWeb.defaultAddress.base58=== false)){
                     _this.$confirm('Please login to the TronLink wallet first.', {
                         confirmButtonText: 'Confirm'
                     });
@@ -107,15 +107,15 @@
                 formData.append("file", params.file);
 
                 let rawData = {
-                    "request_user": window.tronWeb.defaultAddress.base58,
-                    "signed_user": window.tronWeb.defaultAddress.base58,
+                    "request_user": tronWeb.defaultAddress.base58,
+                    "signed_user": tronWeb.defaultAddress.base58,
                     "request_id": UUIDv4(),
                     "timestamp": Date.now()
                 };
 
 
 
-                let signatureData = await window.tronWeb.trx.sign(window.tronWeb.toHex(JSON.stringify(rawData)));
+                let signatureData = await tronWeb.trx.sign(tronWeb.toHex(JSON.stringify(rawData)));
                 formData.append("raw_data",JSON.stringify(rawData));
                 formData.append("signature",signatureData);
 
@@ -141,13 +141,13 @@
             },
             getBalance: function () {
                 const _this = this;
-                if (window.tronWeb && (window.tronWeb.defaultAddress.base58 === false)) {
+                if (tronWeb && (tronWeb.defaultAddress.base58 === false)) {
                     _this.$confirm('Please login to the TronLink wallet first', {
                         confirmButtonText: 'Confirm'
                     });
                     return false
                 }
-                axios.get("https://api.btfssoter.io/api/v0/inquiry?user_address=" + window.tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
+                axios.get("https://api.btfssoter.io/api/v0/inquiry?user_address=" + tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
                     if (response.status === 200 && response.data.code === 0) {
                         _this.$message({
                             message: 'Balance: [' + response.data.balance + ']',
