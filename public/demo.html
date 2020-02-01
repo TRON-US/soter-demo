@@ -161,7 +161,7 @@
             submitUpload() {
                 this.$refs.upload.submit();
             },
-            getBalance: function () {
+            getBalance: async function () {
                 const _this = this;
                 if (tronWeb && (tronWeb.defaultAddress.base58 === false)) {
                     _this.$confirm('Please login to the TronLink wallet first', {
@@ -170,10 +170,18 @@
                     });
                     return false
                 }
-                axios.get("https://api.btfssoter.io/api/v0/inquiry?user_address=" + tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
-                    if (response.status === 200 && response.data.code === 0) {
+
+                let unSigned = {
+                    user_address:  tronWeb.defaultAddress.base58,
+                    timestamp: Date.now()
+                }
+
+                let signatureData = await tronWeb.trx.sign(tronWeb.toHex(JSON.stringify(unSigned)));
+                
+                axios.get("https://sandbox.btfssoter.io/api/v1/balance?user_address=" + tronWeb.defaultAddress.base58 + "&raw_data=" + JSON.stringify(unSigned) + "&signature=" + signatureData).then(function (response) {
+                    if (response.data.code === 0) {
                         _this.$message({
-                            message: 'Balance: [' + response.data.balance + ']',
+                            message: 'Balance: [' + response.data.data.balance + ']',
                             type: 'success'
                         });
                     } else {
