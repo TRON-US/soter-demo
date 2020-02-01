@@ -55,7 +55,7 @@
     </el-upload>
     <div v-if="qmHash" style="margin-top: 20px;">The file you just uploaded can be accessed via this 
         <a style="color: #42b983;" 
-            v-bind:href="'https://gateway.btfssoter.io/btfs/' + qmHash" target="_blank"  
+            v-bind:href="'https://sandbox.btfssoter.io/btfs/' + qmHash" target="_blank"  
             v-bind:title="'https://sandbox.btfssoter.io/btfs/' + qmHash">
             link <br/>(hashcode: {{qmHash}})
         </a>
@@ -91,7 +91,6 @@
         },
         created: function () {
             const _this = this;
-            // `this` 指向 vm 实例
             setTimeout(function () {
                 if (tronWeb && (tronWeb.defaultAddress.base58 === false)){
                     _this.isLogin = true
