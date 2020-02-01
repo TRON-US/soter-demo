@@ -14,6 +14,9 @@
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
         }
+        a{
+            cursor: pointer;
+        }
         h1{
             font-size: 28px;
             color: #1f2d3d;
@@ -35,6 +38,7 @@
 <body>
 <div id="app" style="margin: 100px auto 0 auto; text-align: center;">
     <h1 style="font-weight: bold">BTFS Soter</h1>
+    <p style="color: #999;" v-if="isLogin">Login operation is required when tronlink wallet is installed: <a style="color: #42b983;" target="_blank" href="https://chrome.google.com/webstore/detail/tronlink%EF%BC%88%E6%B3%A2%E5%AE%9D%E9%92%B1%E5%8C%85%EF%BC%89/ibnejdfjmmkpcnlpebklmnkoeoihofec/reviews?utm_source=chrome-ntp-icon">click install</a></p>
     <p>Decentralized file storage tool</p>
     <el-upload class="soter-upload"
                action=""
@@ -49,7 +53,13 @@
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">Drag the file here, or <em>click upload</em></div>
     </el-upload>
-    <div v-if="qmHash" style="margin-top: 20px;">The file you just uploaded can be accessed via this <a style="color: #42b983;" v-bind:href="'https://gateway.btfssoter.io/btfs/' + qmHash" target="_blank"  v-bind:title="'https://sandbox.btfssoter.io/btfs/' + qmHash">link</a></div>
+    <div v-if="qmHash" style="margin-top: 20px;">The file you just uploaded can be accessed via this 
+        <a style="color: #42b983;" 
+            v-bind:href="'https://sandbox.btfssoter.io/btfs/' + qmHash" target="_blank"  
+            v-bind:title="'https://sandbox.btfssoter.io/btfs/' + qmHash">
+            link <br/>(hashcode: {{qmHash}})
+        </a>
+    </div>
    
     <div style="margin-top: 40px; margin-left: -10px">
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">Upload to server</el-button>
@@ -76,28 +86,40 @@
             files:[],
             tronWeb: {},
             qmHash: '',
-            addTest: ''
+            addTest: '',
+            isLogin: false
+        },
+        created: function () {
+            const _this = this;
+            setTimeout(function () {
+                if (tronWeb && (tronWeb.defaultAddress.base58 === false)){
+                    _this.isLogin = true
+                }
+            }, 500)
         },
         methods: {
             beforeUploadFile (file){
                 if (file.size > 1024*1024*500) {
                     this.$confirm('File size must not exceed 500M', {
-                        confirmButtonText: 'Confirm'
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
                     });
                     return false
                 }
             },
             exceedUploadFile(files, fileList){
                 this.$confirm('Only one file can be uploaded at a time', {
-                    confirmButtonText: 'Confirm'
+                    confirmButtonText: 'Confirm',
+                    showCancelButton: false
                 });
             },
             async handleUpload(params) {
                 
                 const _this = this;
-                if (tronWeb && (tronWeb.defaultAddress.base58=== false)){
+                if (tronWeb && (tronWeb.defaultAddress.base58 === false)){
                     _this.$confirm('Please login to the TronLink wallet first.', {
-                        confirmButtonText: 'Confirm'
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
                     });
                     _this.$refs.upload.clearFiles();
                     return false
@@ -139,18 +161,27 @@
             submitUpload() {
                 this.$refs.upload.submit();
             },
-            getBalance: function () {
+            getBalance: async function () {
                 const _this = this;
                 if (tronWeb && (tronWeb.defaultAddress.base58 === false)) {
                     _this.$confirm('Please login to the TronLink wallet first', {
-                        confirmButtonText: 'Confirm'
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
                     });
                     return false
                 }
-                axios.get("https://api.btfssoter.io/api/v0/inquiry?user_address=" + tronWeb.defaultAddress.base58 + "&file_size=1").then(function (response) {
-                    if (response.status === 200 && response.data.code === 0) {
+
+                let unSigned = {
+                    user_address:  tronWeb.defaultAddress.base58,
+                    timestamp: Date.now()
+                }
+
+                let signatureData = await tronWeb.trx.sign(tronWeb.toHex(JSON.stringify(unSigned)));
+                
+                axios.get("https://sandbox.btfssoter.io/api/v1/balance?user_address=" + tronWeb.defaultAddress.base58 + "&raw_data=" + JSON.stringify(unSigned) + "&signature=" + signatureData).then(function (response) {
+                    if (response.data.code === 0) {
                         _this.$message({
-                            message: 'Balance: [' + response.data.balance + ']',
+                            message: 'Balance: [' + response.data.data.balance + ']',
                             type: 'success'
                         });
                     } else {
