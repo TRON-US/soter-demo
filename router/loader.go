@@ -28,6 +28,7 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	filepath := fmt.Sprintf("%s/public", path)
 	g.StaticFile("/demo", filepath+"/demo.html")
 	g.StaticFile("/token", filepath+"/token.html")
+	g.StaticFile("/axios.min.js", filepath+"/axios.min.js")
 
 	transfer := g.Group("api/v0")
 	{
