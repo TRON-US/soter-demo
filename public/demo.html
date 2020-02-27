@@ -38,7 +38,6 @@
 <body>
 <div id="app" style="margin: 100px auto 0 auto; text-align: center;">
     <h1 style="font-weight: bold">BTFS Soter</h1>
-    <p style="color: #999;" v-if="isLogin">Login operation is required when tronlink wallet is installed: <a style="color: #42b983;" target="_blank" href="https://chrome.google.com/webstore/detail/tronlink%EF%BC%88%E6%B3%A2%E5%AE%9D%E9%92%B1%E5%8C%85%EF%BC%89/ibnejdfjmmkpcnlpebklmnkoeoihofec/reviews?utm_source=chrome-ntp-icon">click install</a></p>
     <p>Decentralized file storage tool</p>
     <el-upload class="soter-upload"
                action=""
@@ -75,7 +74,7 @@
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+<script src="./axios.min.js"></script>
 <script>
     new Vue({
         el: '#app',
