@@ -122,6 +122,15 @@
             async handleUpload(params) {
                 
                 const _this = this;
+
+                if(!window.tronWeb){
+                    _this.$confirm('Please login to the TronLink wallet first', {
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
+                    });
+                    return
+                }
+
                 if (tronWeb && (tronWeb.defaultAddress.base58 === false)){
                     _this.$confirm('Please login to the TronLink wallet first.', {
                         confirmButtonText: 'Confirm',
@@ -165,17 +174,26 @@
                 });
             },
             submitUpload() {
+
                 this.$refs.upload.submit();
             },
             getBalance: async function () {
                 const _this = this;
-              
-                if (tronWeb && (tronWeb.defaultAddress.base58 === false)) {
+
+                if(!window.tronWeb){
                     _this.$confirm('Please login to the TronLink wallet first', {
                         confirmButtonText: 'Confirm',
                         showCancelButton: false
                     });
-                    return false
+                    return
+                }
+
+                if (window.tronWeb && (window.tronWeb.defaultAddress.base58 === false)) {
+                    _this.$confirm('Please login to the TronLink wallet first', {
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
+                    });
+                    return
                 }
 
                 let unSigned = {
