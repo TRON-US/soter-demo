@@ -92,8 +92,14 @@
         created: function () {
             const _this = this;
             setTimeout(function () {
-                if (tronWeb && (tronWeb.defaultAddress.base58 === false)){
+           
+                if (window.tronWeb && (window.tronWeb.defaultAddress.base58 === false)){
                     _this.isLogin = true
+                }else{
+                    _this.$confirm('Please login to the TronLink wallet first', {
+                        confirmButtonText: 'Confirm',
+                        showCancelButton: false
+                    });
                 }
             }, 500)
         },
@@ -163,6 +169,7 @@
             },
             getBalance: async function () {
                 const _this = this;
+              
                 if (tronWeb && (tronWeb.defaultAddress.base58 === false)) {
                     _this.$confirm('Please login to the TronLink wallet first', {
                         confirmButtonText: 'Confirm',
